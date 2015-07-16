@@ -10,4 +10,15 @@
 
 @implementation Album
 
+- (id)initWithTitle:(NSString *)title artist:(NSString *)artist coverUrl:(NSString *)coverUrl year:(NSString *)year {
+    if (self = [super init]) {
+        _title = title;
+        _artist = artist;
+        _coverUrl = coverUrl;
+        _year = year;
+        _genre = @"Pop";
+    }
+    return self;
+}
+
 @end
