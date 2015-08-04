@@ -38,6 +38,8 @@
     currentAlbumIndex = 0;
     allAlbums = [[LibraryAPI sharedInstance] getAlbums];
     
+    [self loadPreviousState];
+    
     // Add scroller
     scroller = [[HorizontalScroller alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAlbumSectionHeight)];
     scroller.delegate = self;
@@ -59,6 +61,12 @@
     [self.view addSubview:dataTable];
 
     [self showDataForAlbumAtIndex:currentAlbumIndex];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveCurrentState) name:UIApplicationDidEnterBackgroundNotification object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -89,6 +97,17 @@
     }
     
     [dataTable reloadData];
+}
+
+#pragma mark - Save & Load
+
+- (void)saveCurrentState {
+    [[NSUserDefaults standardUserDefaults] setInteger:currentAlbumIndex forKey:@"currentAlbumIndex"];
+}
+
+- (void)loadPreviousState {
+    currentAlbumIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentAlbumIndex"];
+    [self showDataForAlbumAtIndex:currentAlbumIndex];
 }
 
 #pragma mark - TableView DataSource
@@ -132,5 +151,8 @@
     [self showDataForAlbumAtIndex:index];
 }
 
+- (NSInteger)initialViewIndexForHorizontalScroller:(HorizontalScroller *)scroller {
+    return currentAlbumIndex;
+}
 
 @end
